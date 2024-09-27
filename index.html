@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipment Journey Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 550px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Shipment Journey Map</h1>
+    <div id="map"></div>
+
+    <!-- include leaflet -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- include leaflet-sea-routes -->
+    <script src="https://cdn.jsdelivr.net/gh/mehmetalpsumer/leaflet-sea-routes@master/src/curve.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/mehmetalpsumer/leaflet-sea-routes@master/src/astar.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/mehmetalpsumer/leaflet-sea-routes@master/src/route.js"></script>
+    <script>
+
+        // showing sea routes from one co-ordinate to another using Leaflet and leaflet-sea-routes 
+        // Coordinates
+        const startCoordinates = [19.0760, 72.8777]; // Mumbai
+        const endCoordinates = [38.0020,-72.84425]; // New York
+        const currentCoordinates = [-36.802237, 12.913736]; // Current location
+
+        // Initialize the map
+        const map = L.map('map').setView(startCoordinates, 2); // Set zoom level
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            // maxZoom: 100,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Add markers for each point
+        const startMarker = L.marker(startCoordinates).addTo(map).bindPopup('Start: Mumbai');
+        const currentMarker = L.marker(currentCoordinates).addTo(map).bindPopup('Current Location');
+        const endMarker = L.marker(endCoordinates).addTo(map).bindPopup('End: New York').openPopup();
+
+        // TO find path from start to current locaion and current to end location
+        var curve1 = L.pathCurve(startCoordinates, currentCoordinates);
+        var curve2 = L.pathCurve(currentCoordinates, endCoordinates);
+        curve1.addTo(map);
+
+        setTimeout(() => {
+            curve2.addTo(map);
+        },1500)
+
+        // Fit map to show all markers
+        const group = L.featureGroup([startMarker, currentMarker, endMarker]);
+        map.fitBounds(group.getBounds(),{maxZoom:2});
+
+    </script>
+</body>
+</html>
